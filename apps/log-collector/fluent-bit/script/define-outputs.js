@@ -27,9 +27,20 @@ const ddEnvSchema = z.object({
   DD_API_KEY: z.string()
 });
 
+/**
+ * Zod schema for OpenTelemetry output configuration
+ * Requires the host and port of the OTLP/HTTP logs receiver (e.g. the edge collector)
+ * @type {import('zod').ZodObject}
+ */
+const otelEnvSchema = z.object({
+  OTEL_EXPORTER_HOST: z.string(),
+  OTEL_EXPORTER_PORT: z.string()
+});
+
 // Add outputs based on environment configuration
 addOutput(stdOutEnvSchema, "./outputs/stdout.conf");
 addOutput(ddEnvSchema, "./outputs/datadog.conf");
+addOutput(otelEnvSchema, "./outputs/opentelemetry.conf");
 
 /**
  * Conditionally adds an output configuration to the fluent-bit config

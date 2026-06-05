@@ -45,6 +45,19 @@ To enable stdout output for debugging, set:
 | -------------- | -------------------- | ------------------- |
 | `STDOUT` | Enable stdout output | `true` |
 
+#### OpenTelemetry Output (Automatic)
+
+To forward logs as OTLP/HTTP to an OpenTelemetry collector, set both variables:
+
+| Variable             | Description                                | Example     |
+| -------------------- | ------------------------------------------ | ----------- |
+| `OTEL_EXPORTER_HOST` | Hostname of the OTLP/HTTP logs receiver    | `telemetry` |
+| `OTEL_EXPORTER_PORT` | Port of the OTLP/HTTP logs receiver        | `4318`      |
+
+Logs are sent to `/v1/logs` over plaintext (intended for a local in-pod hop to a collector). The parsed log line becomes the OTLP log record body; `namespace`, `pod_name`, and `service` ride along as log record attributes. Downstream the collector can promote these to backend labels (e.g. Loki stream labels).
+
+Outputs are **additive** — if both `DD_*` and `OTEL_EXPORTER_*` are set, logs are shipped to Datadog *and* the collector.
+
 **How it works**: The system automatically includes the appropriate output configuration files based on the environment variables present. No manual configuration needed.
 
 ## Deployment

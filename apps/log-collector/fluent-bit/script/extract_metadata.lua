@@ -60,6 +60,14 @@ function extract_metadata(tag, timestamp, record)
     -- Set extracted metadata in the record for Datadog integration
     record["service"] = service
 
+    -- Expose namespace and pod name as discrete fields so OTLP/Loki output
+    -- can promote them to log record attributes / stream labels.
+    record["pod_name"] = pod_name
+    local namespace = string.match(filename, "^([^_]+)_")
+    if namespace then
+        record["namespace"] = namespace
+    end
+
     local tags = "pod_name:" .. pod_name .. ",service:" .. service
 
     local akash_tags = {
